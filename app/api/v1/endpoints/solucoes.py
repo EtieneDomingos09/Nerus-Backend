@@ -1,0 +1,1 @@
+#CRUD e soluções + avaliacoes AI

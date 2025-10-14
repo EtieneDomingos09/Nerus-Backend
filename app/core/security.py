@@ -1,0 +1,1 @@
+# JWT hash com senha e autenticacao
