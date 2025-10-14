@@ -1,5 +1,5 @@
-import myssql.connector
-from myssql.connector import Error
+import mysql.connector
+from mysql.connector import Error
 from contextlib import contextmanager
 from typing import Generator
 from app.core.config import settings
