@@ -1,0 +1,632 @@
+-- MySQL dump 10.13  Distrib 8.0.43, for Linux (x86_64)
+--
+-- Host: localhost    Database: nerus
+-- ------------------------------------------------------
+-- Server version	8.0.43-0ubuntu0.24.04.2
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `certificados`
+--
+
+DROP TABLE IF EXISTS `certificados`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `certificados` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `solucao_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `problema_id` int NOT NULL,
+  `empresa_id` int NOT NULL,
+  `codigo_verificacao` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `titulo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descricao` text COLLATE utf8mb4_unicode_ci,
+  `url_certificado` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `data_emissao` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `codigo_verificacao` (`codigo_verificacao`),
+  KEY `solucao_id` (`solucao_id`),
+  KEY `problema_id` (`problema_id`),
+  KEY `empresa_id` (`empresa_id`),
+  KEY `idx_user` (`user_id`),
+  KEY `idx_codigo` (`codigo_verificacao`),
+  CONSTRAINT `certificados_ibfk_1` FOREIGN KEY (`solucao_id`) REFERENCES `solucoes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `certificados_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `certificados_ibfk_3` FOREIGN KEY (`problema_id`) REFERENCES `problemas` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `certificados_ibfk_4` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `certificados`
+--
+
+LOCK TABLES `certificados` WRITE;
+/*!40000 ALTER TABLE `certificados` DISABLE KEYS */;
+/*!40000 ALTER TABLE `certificados` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `empresas`
+--
+
+DROP TABLE IF EXISTS `empresas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `empresas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome_empresa` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_corporativo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `senha_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nif` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `telefone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `endereco` text COLLATE utf8mb4_unicode_ci,
+  `provincia` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `municipio` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `setor_atuacao` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `website` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `linkedin_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `logo_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email_verificado` tinyint(1) DEFAULT '0',
+  `token_verificacao` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ativo` tinyint(1) DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email_corporativo` (`email_corporativo`),
+  UNIQUE KEY `nif` (`nif`),
+  KEY `idx_email` (`email_corporativo`),
+  KEY `idx_setor` (`setor_atuacao`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `empresas`
+--
+
+LOCK TABLES `empresas` WRITE;
+/*!40000 ALTER TABLE `empresas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `empresas` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `habilidades`
+--
+
+DROP TABLE IF EXISTS `habilidades`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `habilidades` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `categoria` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descricao` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nome` (`nome`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `habilidades`
+--
+
+LOCK TABLES `habilidades` WRITE;
+/*!40000 ALTER TABLE `habilidades` DISABLE KEYS */;
+INSERT INTO `habilidades` VALUES (1,'Python','Programação',NULL,'2025-10-14 10:04:03'),(2,'JavaScript','Programação',NULL,'2025-10-14 10:04:03'),(3,'React','Programação',NULL,'2025-10-14 10:04:03'),(4,'Node.js','Programação',NULL,'2025-10-14 10:04:03'),(5,'Design Gráfico','Design',NULL,'2025-10-14 10:04:03'),(6,'UI/UX Design','Design',NULL,'2025-10-14 10:04:03'),(7,'Marketing Digital','Marketing',NULL,'2025-10-14 10:04:03'),(8,'SEO','Marketing',NULL,'2025-10-14 10:04:03'),(9,'Gestão de Projetos','Gestão',NULL,'2025-10-14 10:04:03'),(10,'Análise de Dados','Dados',NULL,'2025-10-14 10:04:03');
+/*!40000 ALTER TABLE `habilidades` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `logs_atividade`
+--
+
+DROP TABLE IF EXISTS `logs_atividade`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `logs_atividade` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `empresa_id` int DEFAULT NULL,
+  `tipo_usuario` enum('user','empresa') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `acao` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `detalhes` json DEFAULT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `empresa_id` (`empresa_id`),
+  KEY `idx_data` (`created_at`),
+  KEY `idx_acao` (`acao`),
+  CONSTRAINT `logs_atividade_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `logs_atividade_ibfk_2` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `logs_atividade`
+--
+
+LOCK TABLES `logs_atividade` WRITE;
+/*!40000 ALTER TABLE `logs_atividade` DISABLE KEYS */;
+/*!40000 ALTER TABLE `logs_atividade` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `after_problema_visualizado` AFTER INSERT ON `logs_atividade` FOR EACH ROW BEGIN
+    IF NEW.acao = 'visualizar_problema' AND NEW.detalhes IS NOT NULL THEN
+        UPDATE problemas 
+        SET visualizacoes = visualizacoes + 1
+        WHERE id = JSON_EXTRACT(NEW.detalhes, '$.problema_id');
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `notificacoes`
+--
+
+DROP TABLE IF EXISTS `notificacoes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notificacoes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `empresa_id` int DEFAULT NULL,
+  `tipo_destinatario` enum('user','empresa') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `titulo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mensagem` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `link` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lida` tinyint(1) DEFAULT '0',
+  `data_leitura` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_user` (`user_id`,`lida`),
+  KEY `idx_empresa` (`empresa_id`,`lida`),
+  CONSTRAINT `notificacoes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `notificacoes_ibfk_2` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notificacoes`
+--
+
+LOCK TABLES `notificacoes` WRITE;
+/*!40000 ALTER TABLE `notificacoes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notificacoes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `premios`
+--
+
+DROP TABLE IF EXISTS `premios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `premios` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `problema_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `solucao_id` int NOT NULL,
+  `tipo_premio` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descricao` text COLLATE utf8mb4_unicode_ci,
+  `valor_monetario` decimal(10,2) DEFAULT NULL,
+  `status` enum('pendente','entregue','cancelado') COLLATE utf8mb4_unicode_ci DEFAULT 'pendente',
+  `data_atribuicao` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `data_entrega` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `problema_id` (`problema_id`),
+  KEY `solucao_id` (`solucao_id`),
+  KEY `idx_user` (`user_id`),
+  KEY `idx_status` (`status`),
+  CONSTRAINT `premios_ibfk_1` FOREIGN KEY (`problema_id`) REFERENCES `problemas` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `premios_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `premios_ibfk_3` FOREIGN KEY (`solucao_id`) REFERENCES `solucoes` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `premios`
+--
+
+LOCK TABLES `premios` WRITE;
+/*!40000 ALTER TABLE `premios` DISABLE KEYS */;
+/*!40000 ALTER TABLE `premios` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `problemas`
+--
+
+DROP TABLE IF EXISTS `problemas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `problemas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `empresa_id` int NOT NULL,
+  `titulo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descricao` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `contexto_empresa` text COLLATE utf8mb4_unicode_ci,
+  `area` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nivel_dificuldade` enum('iniciante','intermediario','avancado') COLLATE utf8mb4_unicode_ci DEFAULT 'iniciante',
+  `tipo` enum('free','premium') COLLATE utf8mb4_unicode_ci DEFAULT 'free',
+  `objetivos` text COLLATE utf8mb4_unicode_ci,
+  `requisitos` text COLLATE utf8mb4_unicode_ci,
+  `recursos_fornecidos` text COLLATE utf8mb4_unicode_ci,
+  `prazo_dias` int DEFAULT '30',
+  `pontos_recompensa` int DEFAULT '100',
+  `oferece_certificado` tinyint(1) DEFAULT '0',
+  `premio_descricao` text COLLATE utf8mb4_unicode_ci,
+  `criterios_avaliacao` json DEFAULT NULL,
+  `status` enum('ativo','fechado','arquivado') COLLATE utf8mb4_unicode_ci DEFAULT 'ativo',
+  `data_inicio` date NOT NULL,
+  `data_fim` date NOT NULL,
+  `max_participantes` int DEFAULT '0',
+  `visualizacoes` int DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_empresa` (`empresa_id`),
+  KEY `idx_area` (`area`),
+  KEY `idx_tipo` (`tipo`),
+  KEY `idx_status` (`status`),
+  KEY `idx_nivel` (`nivel_dificuldade`),
+  FULLTEXT KEY `idx_fulltext_problemas` (`titulo`,`descricao`),
+  CONSTRAINT `problemas_ibfk_1` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `problemas`
+--
+
+LOCK TABLES `problemas` WRITE;
+/*!40000 ALTER TABLE `problemas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `problemas` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ranking_mensal`
+--
+
+DROP TABLE IF EXISTS `ranking_mensal`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ranking_mensal` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `mes` int NOT NULL,
+  `ano` int NOT NULL,
+  `pontos_mes` int DEFAULT '0',
+  `problemas_resolvidos` int DEFAULT '0',
+  `posicao_ranking` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_mes_ano` (`user_id`,`mes`,`ano`),
+  KEY `idx_ranking` (`ano`,`mes`,`pontos_mes` DESC),
+  CONSTRAINT `ranking_mensal_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ranking_mensal`
+--
+
+LOCK TABLES `ranking_mensal` WRITE;
+/*!40000 ALTER TABLE `ranking_mensal` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ranking_mensal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `recomendacoes`
+--
+
+DROP TABLE IF EXISTS `recomendacoes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `recomendacoes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `empresa_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `score_compatibilidade` decimal(5,2) DEFAULT NULL,
+  `razoes_recomendacao` json DEFAULT NULL,
+  `areas_match` json DEFAULT NULL,
+  `visualizado` tinyint(1) DEFAULT '0',
+  `data_visualizacao` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `idx_empresa` (`empresa_id`),
+  KEY `idx_score` (`score_compatibilidade` DESC),
+  CONSTRAINT `recomendacoes_ibfk_1` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `recomendacoes_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `recomendacoes`
+--
+
+LOCK TABLES `recomendacoes` WRITE;
+/*!40000 ALTER TABLE `recomendacoes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `recomendacoes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `solucoes`
+--
+
+DROP TABLE IF EXISTS `solucoes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `solucoes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `problema_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `descricao_solucao` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `arquivos_anexos` json DEFAULT NULL,
+  `link_repositorio` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `link_demo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `analise_ai` json DEFAULT NULL,
+  `pontuacao_ai` decimal(5,2) DEFAULT NULL,
+  `feedback_ai` text COLLATE utf8mb4_unicode_ci,
+  `criterios_atendidos` json DEFAULT NULL,
+  `avaliacao_empresa` text COLLATE utf8mb4_unicode_ci,
+  `pontuacao_empresa` decimal(5,2) DEFAULT NULL,
+  `pontuacao_final` decimal(5,2) DEFAULT NULL,
+  `pontos_ganhos` int DEFAULT '0',
+  `status` enum('em_analise','aprovada','reprovada','revisao') COLLATE utf8mb4_unicode_ci DEFAULT 'em_analise',
+  `certificado_emitido` tinyint(1) DEFAULT '0',
+  `certificado_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `data_submissao` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `data_avaliacao` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_problema` (`user_id`,`problema_id`),
+  KEY `idx_problema` (`problema_id`),
+  KEY `idx_user` (`user_id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_pontuacao` (`pontuacao_final`),
+  CONSTRAINT `solucoes_ibfk_1` FOREIGN KEY (`problema_id`) REFERENCES `problemas` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `solucoes_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `solucoes`
+--
+
+LOCK TABLES `solucoes` WRITE;
+/*!40000 ALTER TABLE `solucoes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `solucoes` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `after_solucao_aprovada` AFTER UPDATE ON `solucoes` FOR EACH ROW BEGIN
+    IF NEW.status = 'aprovada' AND OLD.status != 'aprovada' THEN
+        UPDATE users 
+        SET pontos_totais = pontos_totais + NEW.pontos_ganhos
+        WHERE id = NEW.user_id;
+        
+        CALL atualizar_nivel_usuario(NEW.user_id);
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `user_habilidades`
+--
+
+DROP TABLE IF EXISTS `user_habilidades`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_habilidades` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `habilidade_id` int NOT NULL,
+  `nivel_proficiencia` enum('basico','intermediario','avancado','expert') COLLATE utf8mb4_unicode_ci DEFAULT 'basico',
+  `comprovado` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_habilidade` (`user_id`,`habilidade_id`),
+  KEY `habilidade_id` (`habilidade_id`),
+  CONSTRAINT `user_habilidades_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `user_habilidades_ibfk_2` FOREIGN KEY (`habilidade_id`) REFERENCES `habilidades` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_habilidades`
+--
+
+LOCK TABLES `user_habilidades` WRITE;
+/*!40000 ALTER TABLE `user_habilidades` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_habilidades` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome_completo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `senha_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `telefone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `data_nascimento` date DEFAULT NULL,
+  `area_interesse` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nivel_educacao` enum('medio','superior_em_curso','superior_completo','pos_graduacao') COLLATE utf8mb4_unicode_ci DEFAULT 'medio',
+  `biografia` text COLLATE utf8mb4_unicode_ci,
+  `linkedin_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `portfolio_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `foto_perfil` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pontos_totais` int DEFAULT '0',
+  `nivel_atual` int DEFAULT '1',
+  `patente` enum('iniciante','bronze','prata','ouro','platina','diamante') COLLATE utf8mb4_unicode_ci DEFAULT 'iniciante',
+  `email_verificado` tinyint(1) DEFAULT '0',
+  `token_verificacao` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ativo` tinyint(1) DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `idx_email` (`email`),
+  KEY `idx_pontos` (`pontos_totais`),
+  KEY `idx_nivel` (`nivel_atual`),
+  FULLTEXT KEY `idx_fulltext_users` (`nome_completo`,`biografia`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'Teste User','teste@email.com','hash123',NULL,NULL,NULL,'medio',NULL,NULL,NULL,NULL,1500,2,'bronze',0,NULL,1,'2025-10-14 10:09:28','2025-10-14 10:09:41');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `view_problemas_ativos`
+--
+
+DROP TABLE IF EXISTS `view_problemas_ativos`;
+/*!50001 DROP VIEW IF EXISTS `view_problemas_ativos`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `view_problemas_ativos` AS SELECT 
+ 1 AS `id`,
+ 1 AS `empresa_id`,
+ 1 AS `titulo`,
+ 1 AS `descricao`,
+ 1 AS `contexto_empresa`,
+ 1 AS `area`,
+ 1 AS `nivel_dificuldade`,
+ 1 AS `tipo`,
+ 1 AS `objetivos`,
+ 1 AS `requisitos`,
+ 1 AS `recursos_fornecidos`,
+ 1 AS `prazo_dias`,
+ 1 AS `pontos_recompensa`,
+ 1 AS `oferece_certificado`,
+ 1 AS `premio_descricao`,
+ 1 AS `criterios_avaliacao`,
+ 1 AS `status`,
+ 1 AS `data_inicio`,
+ 1 AS `data_fim`,
+ 1 AS `max_participantes`,
+ 1 AS `visualizacoes`,
+ 1 AS `created_at`,
+ 1 AS `updated_at`,
+ 1 AS `nome_empresa`,
+ 1 AS `empresa_logo`,
+ 1 AS `total_solucoes`,
+ 1 AS `media_pontuacao_solucoes`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `view_ranking_global`
+--
+
+DROP TABLE IF EXISTS `view_ranking_global`;
+/*!50001 DROP VIEW IF EXISTS `view_ranking_global`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `view_ranking_global` AS SELECT 
+ 1 AS `id`,
+ 1 AS `nome_completo`,
+ 1 AS `foto_perfil`,
+ 1 AS `pontos_totais`,
+ 1 AS `nivel_atual`,
+ 1 AS `patente`,
+ 1 AS `total_solucoes`,
+ 1 AS `media_pontuacao`,
+ 1 AS `posicao`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Final view structure for view `view_problemas_ativos`
+--
+
+/*!50001 DROP VIEW IF EXISTS `view_problemas_ativos`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_problemas_ativos` AS select `p`.`id` AS `id`,`p`.`empresa_id` AS `empresa_id`,`p`.`titulo` AS `titulo`,`p`.`descricao` AS `descricao`,`p`.`contexto_empresa` AS `contexto_empresa`,`p`.`area` AS `area`,`p`.`nivel_dificuldade` AS `nivel_dificuldade`,`p`.`tipo` AS `tipo`,`p`.`objetivos` AS `objetivos`,`p`.`requisitos` AS `requisitos`,`p`.`recursos_fornecidos` AS `recursos_fornecidos`,`p`.`prazo_dias` AS `prazo_dias`,`p`.`pontos_recompensa` AS `pontos_recompensa`,`p`.`oferece_certificado` AS `oferece_certificado`,`p`.`premio_descricao` AS `premio_descricao`,`p`.`criterios_avaliacao` AS `criterios_avaliacao`,`p`.`status` AS `status`,`p`.`data_inicio` AS `data_inicio`,`p`.`data_fim` AS `data_fim`,`p`.`max_participantes` AS `max_participantes`,`p`.`visualizacoes` AS `visualizacoes`,`p`.`created_at` AS `created_at`,`p`.`updated_at` AS `updated_at`,`e`.`nome_empresa` AS `nome_empresa`,`e`.`logo_url` AS `empresa_logo`,count(distinct `s`.`id`) AS `total_solucoes`,avg(`s`.`pontuacao_final`) AS `media_pontuacao_solucoes` from ((`problemas` `p` join `empresas` `e` on((`p`.`empresa_id` = `e`.`id`))) left join `solucoes` `s` on((`p`.`id` = `s`.`problema_id`))) where ((`p`.`status` = 'ativo') and (`p`.`data_fim` >= curdate())) group by `p`.`id` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `view_ranking_global`
+--
+
+/*!50001 DROP VIEW IF EXISTS `view_ranking_global`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_ranking_global` AS select `u`.`id` AS `id`,`u`.`nome_completo` AS `nome_completo`,`u`.`foto_perfil` AS `foto_perfil`,`u`.`pontos_totais` AS `pontos_totais`,`u`.`nivel_atual` AS `nivel_atual`,`u`.`patente` AS `patente`,count(distinct `s`.`id`) AS `total_solucoes`,avg(`s`.`pontuacao_final`) AS `media_pontuacao`,rank() OVER (ORDER BY `u`.`pontos_totais` desc )  AS `posicao` from (`users` `u` left join `solucoes` `s` on(((`u`.`id` = `s`.`user_id`) and (`s`.`status` = 'aprovada')))) where (`u`.`ativo` = true) group by `u`.`id` order by `u`.`pontos_totais` desc */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-10-14 14:50:38
