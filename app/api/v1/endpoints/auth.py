@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.schemas.auth import (
     UserRegister, EmpresaRegister, LoginRequest, LoginResponse,
     EmailVerification, EmailVerificationResponse
 )
 from app.core.database import get_db
 from app.core.security import hash_password, verify_password, create_access_token, create_verification_token
+from app.api.deps import get_current_user
 from mysql.connector import IntegrityError
 
 router = APIRouter()
+security = HTTPBearer()
 
 # ==================== REGISTER USER ====================
 
@@ -135,7 +138,7 @@ def login(credentials: LoginRequest, cursor = Depends(get_db)):
     
     # Criar token JWT
     token_data = {
-        "sub": user['id'],
+        "sub": str(user['id']),  # ✅ Converter para string
         "email": user['email'],
         "tipo": credentials.tipo_usuario
     }
@@ -199,17 +202,31 @@ def verify_email(verification: EmailVerification, cursor = Depends(get_db)):
 # ==================== ME ====================
 
 @router.get("/me")
-def get_current_user_info(cursor = Depends(get_db)):
+def get_current_user_info(
+    current_user: dict = Depends(get_current_user)
+):
     """Obter informações do usuário atual (requer autenticação)"""
-    from app.api.deps import get_current_user
-    from fastapi import Depends as FastAPIDepends
-    
-    current_user = FastAPIDepends(get_current_user)
     
     return {
         "user_id": current_user['id'],
-        "nome": current_user['nome_completo'],
+        "nome": current_user.get('nome_completo'),
         "email": current_user['email'],
         "tipo": current_user['tipo_usuario'],
         "email_verificado": current_user['email_verificado']
     }
+
+# ==================== DEBUG TOKEN (TEMPORÁRIO) ====================
+
+# @router.get("/debug-token")
+# def debug_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+#     """Debug do token - REMOVER EM PRODUÇÃO"""
+#     from app.core.security import decode_access_token
+    
+#     token = credentials.credentials
+#     payload = decode_access_token(token)
+    
+#     return {
+#         "token_recebido": token[:50] + "...",
+#         "payload_decodificado": payload,
+#         "token_valido": payload is not None
+#     }

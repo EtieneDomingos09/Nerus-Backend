@@ -7,7 +7,7 @@ from app.api.v1.router import api_router
 # Criar aplicação FastAPI
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="API para Plataforma de Capacitação de Estudantes Angolanos",
+    description=" Nerus - API para Plataforma de Capacitação de Estudantes Angolanos",
     version="1.0.0",
     docs_url="/docs",  # Swagger UI
     redoc_url="/redoc"  # ReDoc

@@ -11,6 +11,7 @@ mysql-connector-python==8.2.0
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-decouple==3.8
+argon2-cffi>=21.3.0
 
 # Validação e serialização
 pydantic==2.5.0

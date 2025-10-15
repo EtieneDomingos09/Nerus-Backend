@@ -62,6 +62,21 @@ class HabilidadeAdd(BaseModel):
     habilidade_id: int
     nivel_proficiencia: str = Field(..., pattern="^(basico|intermediario|avancado|expert)$")
 
+# ==================== LISTAR HABILIDADES DISPONÍVEIS ====================
+# IMPORTANTE: Esta rota deve vir ANTES de /{user_id} para evitar conflitos
+
+@router.get("/habilidades-disponiveis", response_model=List[dict])
+def get_habilidades_disponiveis(cursor = Depends(get_db)):
+    """Listar todas as habilidades disponíveis no sistema"""
+    
+    cursor.execute("""
+        SELECT id, nome, categoria, descricao
+        FROM habilidades
+        ORDER BY categoria, nome
+    """)
+    
+    return cursor.fetchall()
+
 # ==================== PERFIL DO USUÁRIO ====================
 
 @router.get("/me", response_model=UserProfile)
@@ -84,30 +99,9 @@ def get_my_profile(
             detail="Usuário não encontrado"
         )
     
-    return user
-
-@router.get("/{user_id}", response_model=UserProfile)
-def get_user_profile(
-    user_id: int,
-    cursor = Depends(get_db)
-):
-    """Obter perfil público de um usuário"""
-    
-    cursor.execute(
-        """SELECT id, nome_completo, email, biografia, linkedin_url, 
-           portfolio_url, foto_perfil, pontos_totais, nivel_atual, 
-           patente, created_at 
-           FROM users WHERE id = %s AND ativo = TRUE""",
-        (user_id,)
-    )
-    
-    user = cursor.fetchone()
-    
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuário não encontrado"
-        )
+    # Converter datetime para string
+    if user.get('created_at'):
+        user['created_at'] = str(user['created_at'])
     
     return user
 
@@ -302,20 +296,6 @@ def remove_habilidade(
     
     return {"message": "Habilidade removida com sucesso!"}
 
-# ==================== LISTAR HABILIDADES DISPONÍVEIS ====================
-
-@router.get("/habilidades-disponiveis", response_model=List[dict])
-def get_habilidades_disponiveis(cursor = Depends(get_db)):
-    """Listar todas as habilidades disponíveis no sistema"""
-    
-    cursor.execute("""
-        SELECT id, nome, categoria, descricao
-        FROM habilidades
-        ORDER BY categoria, nome
-    """)
-    
-    return cursor.fetchall()
-
 # ==================== MUDAR SENHA ====================
 
 @router.post("/me/change-password", response_model=dict)
@@ -391,3 +371,31 @@ def deactivate_account(
     )
     
     return {"message": "Conta desativada com sucesso. Entre em contato com o suporte para reativar."}
+
+# ==================== PERFIL PÚBLICO ====================
+# IMPORTANTE: Esta rota deve vir POR ÚLTIMO porque captura qualquer /{user_id}
+
+@router.get("/{user_id}", response_model=UserProfile)
+def get_user_profile(
+    user_id: int,
+    cursor = Depends(get_db)
+):
+    """Obter perfil público de um usuário"""
+    
+    cursor.execute(
+        """SELECT id, nome_completo, email, biografia, linkedin_url, 
+           portfolio_url, foto_perfil, pontos_totais, nivel_atual, 
+           patente, created_at 
+           FROM users WHERE id = %s AND ativo = TRUE""",
+        (user_id,)
+    )
+    
+    user = cursor.fetchone()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuário não encontrado"
+        )
+    
+    return user

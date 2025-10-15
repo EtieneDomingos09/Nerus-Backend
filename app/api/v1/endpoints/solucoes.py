@@ -1,5 +1,5 @@
-#CRUD e soluções + avaliacoes AI
-from fastapi import APIRouter, Depends, HTTPException, status
+# CRUD e soluções + avaliações AI
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from app.core.database import get_db
@@ -27,6 +27,11 @@ class SolucaoResponse(BaseModel):
     pontos_ganhos: int
     status: str
     feedback_ai: Optional[str] = None
+
+class AvaliacaoManual(BaseModel):
+    """Schema para avaliação manual pela empresa"""
+    avaliacao: str = Field(..., min_length=10)
+    pontuacao: float = Field(..., ge=0, le=100)
 
 # ==================== SUBMETER SOLUÇÃO ====================
 
@@ -262,8 +267,7 @@ def solucoes_do_problema(
 @router.patch("/{solucao_id}/avaliar", response_model=dict)
 def avaliar_solucao(
     solucao_id: int,
-    avaliacao: str,
-    pontuacao: float = Field(..., ge=0, le=100),
+    avaliacao_data: AvaliacaoManual = Body(...),
     current_empresa = Depends(get_current_empresa),
     cursor = Depends(get_db)
 ):
@@ -294,6 +298,11 @@ def avaliar_solucao(
     WHERE id = %s
     """
     
-    cursor.execute(query, (avaliacao, pontuacao, pontuacao, solucao_id))
+    cursor.execute(query, (
+        avaliacao_data.avaliacao, 
+        avaliacao_data.pontuacao, 
+        avaliacao_data.pontuacao, 
+        solucao_id
+    ))
     
     return {"message": "Avaliação registrada com sucesso!"}
